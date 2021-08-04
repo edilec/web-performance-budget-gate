@@ -1,0 +1,17 @@
+{
+  "name": "web-performance-budget-gate",
+  "version": "0.0.0",
+  "description": "Fail builds when route-level performance budgets exceed declared limits.",
+  "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "test": "node --test"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/edilec/web-performance-budget-gate"
+  }
+}

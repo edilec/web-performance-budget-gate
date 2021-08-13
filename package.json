@@ -1,13 +1,15 @@
 {
   "name": "web-performance-budget-gate",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "description": "Fail builds when route-level performance budgets exceed declared limits.",
   "type": "module",
   "engines": {
     "node": ">=22"
   },
   "scripts": {
-    "test": "node --test"
+    "lint": "node --check src/index.mjs && node --check bin/web-performance-budget-gate.mjs",
+    "test": "node --test",
+    "check": "npm run lint && npm test"
   },
   "license": "MIT",
   "repository": {

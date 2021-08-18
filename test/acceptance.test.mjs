@@ -63,3 +63,12 @@ test('finding pointers sort by code unit rather than numeric route ordinal',()=>
   const c=capture();c.runs=b.routes.map((x,i)=>({route:x.route,runId:`r${i}`,report:{lighthouseVersion:'12.0.0',audits:{'largest-contentful-paint':{numericValue:2000}}}}));
   const r=evaluateBudgets(b,c,{now:()=>0});assert.equal(r.status,'fail');assert.deepEqual(r.findings.map(f=>f.location.pointer),['/routes/10/metrics/0','/routes/2/metrics/0']);
 });
+test('exact decimal mean and even median at a budget boundary pass without epsilon masking',()=>{
+  for(const aggregation of ['mean','median']){
+    const b=budget();b.routes[0]={route:'/',minRuns:2,metrics:[{audit:'foo',aggregation,max:0.15,baseline:0.15,tolerancePercent:0}]};
+    const c={schemaVersion:'1',complete:true,runs:[0.1,0.2].map((numericValue,i)=>({route:'/',runId:`r${i}`,report:{lighthouseVersion:'12.0.0',audits:{foo:{numericValue}}}}))};
+    assert.equal(evaluateBudgets(b,c,{now:()=>0}).status,'pass');
+    c.runs[1].report.audits.foo.numericValue=0.20000000000000004;
+    const over=evaluateBudgets(b,c,{now:()=>0});assert.equal(over.status,'fail');assert.deepEqual(over.findings.map(f=>f.ruleId),['budget-exceeded','regression-exceeded']);
+  }
+});

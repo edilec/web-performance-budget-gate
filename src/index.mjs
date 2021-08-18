@@ -16,7 +16,28 @@ function tooDeep(input){const stack=[[input,0]];while(stack.length){const [item,
 function validMetric(x){return object(x)&&audit(x.audit)&&['median','mean','max'].includes(x.aggregation)&&value(x.max)&&value(x.baseline)&&value(x.tolerancePercent)&&x.tolerancePercent<=100;}
 function validBudget(x){return object(x)&&x.schemaVersion==='1'&&(x.complete===undefined||typeof x.complete==='boolean')&&Array.isArray(x.routes)&&x.routes.length>0;}
 function validCapture(x){return object(x)&&x.schemaVersion==='1'&&(x.complete===undefined||typeof x.complete==='boolean')&&Array.isArray(x.runs);}
-function aggregate(values,method){const sorted=[...values].sort((a,b)=>a-b);if(method==='max')return sorted.at(-1);if(method==='mean')return values.reduce((sum,x)=>sum+x,0)/values.length;const mid=Math.floor(sorted.length/2);return sorted.length%2?sorted[mid]:(sorted[mid-1]+sorted[mid])/2;}
+const power=n=>10n**BigInt(n);
+function decimal(number){
+  const match=/^(\d+)(?:\.(\d+))?(?:e([+-]?\d+))?$/i.exec(number.toString());
+  const fraction=match[2]||'',exponent=Number(match[3]||0);
+  let numerator=BigInt(match[1]+fraction),scale=fraction.length-exponent;
+  if(scale<0){numerator*=power(-scale);scale=0;}
+  return {numerator,scale};
+}
+function aggregateRatio(values,method){
+  const decimals=values.map(decimal),scale=Math.max(...decimals.map(x=>x.scale));
+  const units=decimals.map(x=>x.numerator*power(scale-x.scale));
+  if(method==='mean')return {numerator:units.reduce((a,b)=>a+b,0n),denominator:BigInt(units.length)*power(scale)};
+  units.sort((a,b)=>a<b?-1:a>b?1:0);
+  if(method==='max')return {numerator:units.at(-1),denominator:power(scale)};
+  const mid=Math.floor(units.length/2);
+  return units.length%2?{numerator:units[mid],denominator:power(scale)}:{numerator:units[mid-1]+units[mid],denominator:2n*power(scale)};
+}
+function baselineRatio(baseline,tolerancePercent){
+  const b=decimal(baseline),t=decimal(tolerancePercent);
+  return {numerator:b.numerator*(100n*power(t.scale)+t.numerator),denominator:100n*power(b.scale+t.scale)};
+}
+const exceeds=(actual,limit)=>actual.numerator*limit.denominator>limit.numerator*actual.denominator;
 
 export function evaluateBudgets(budget,capture,{now=()=>performance.now()}={}){
   const start=now(),findings=[];const timed=()=>now()-start>LIMITS.milliseconds;
@@ -76,9 +97,9 @@ export function evaluateBudgets(budget,capture,{now=()=>performance.now()}={}){
       }
       if(missing)continue;
       checked++;
-      const result=aggregate(values,metric.aggregation),pointer=`/routes/${i}/metrics/${j}`;
-      if(result>metric.max)findings.push(finding('budget-exceeded','@budget',pointer));
-      if(result>metric.baseline*(1+metric.tolerancePercent/100))findings.push(finding('regression-exceeded','@budget',pointer));
+      const result=aggregateRatio(values,metric.aggregation),absolute=decimal(metric.max),pointer=`/routes/${i}/metrics/${j}`;
+      if(exceeds(result,{numerator:absolute.numerator,denominator:power(absolute.scale)}))findings.push(finding('budget-exceeded','@budget',pointer));
+      if(exceeds(result,baselineRatio(metric.baseline,metric.tolerancePercent)))findings.push(finding('regression-exceeded','@budget',pointer));
     }
   }
   if(timed())return incomplete('time-limit','@capture');

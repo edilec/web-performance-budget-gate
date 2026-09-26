@@ -1,0 +1,1 @@
+{"schemaVersion":"1","complete":true,"routes":[{"route":"/home","minRuns":3,"metrics":[{"audit":"largest-contentful-paint","aggregation":"median","max":2500,"baseline":2000,"tolerancePercent":10}]}]}

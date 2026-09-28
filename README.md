@@ -4,6 +4,15 @@
 
 For a visual walkthrough of the included synthetic pass and fail fixtures, see the [Web Performance Budget Gate worked example](https://edilec.com/open-source/web-performance-budget-gate/). The repository remains the source of truth for the CLI and fixture data.
 
+Install the public source directly from GitHub if you want the command in a local project. This package has **not** been published to the npm registry:
+
+```sh
+npm install github:edilec/web-performance-budget-gate
+npx web-performance-budget-gate --help
+```
+
+Supply your own captured Lighthouse JSON and budget files to the installed command. To run the checked-in synthetic examples, use a repository checkout:
+
 ```sh
 node bin/web-performance-budget-gate.mjs --root examples/pass --budget budget.json --capture capture.json
 node bin/web-performance-budget-gate.mjs --root examples/fail --budget budget.json --capture capture.json

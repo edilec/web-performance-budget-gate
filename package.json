@@ -3,6 +3,17 @@
   "version": "1.0.0",
   "description": "Fail builds when route-level performance budgets exceed declared limits.",
   "type": "module",
+  "bin": {
+    "web-performance-budget-gate": "bin/web-performance-budget-gate.mjs"
+  },
+  "homepage": "https://edilec.com/open-source/web-performance-budget-gate/",
+  "files": [
+    "bin/",
+    "src/index.mjs",
+    "docs/",
+    "examples/",
+    "TOOL_ID"
+  ],
   "engines": {
     "node": ">=22"
   },

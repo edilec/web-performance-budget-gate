@@ -2,6 +2,8 @@
 
 `TOOL_ID=web-performance-budget-gate`. Zero-dependency Node 22+ reporter for captured Lighthouse JSON metrics and an explicit route budget. It does not run Lighthouse, load a page, fetch data, or infer live performance. All files are local and read-only.
 
+For a visual walkthrough of the included synthetic pass and fail fixtures, see the [Web Performance Budget Gate worked example](https://edilec.com/open-source/web-performance-budget-gate/). The repository remains the source of truth for the CLI and fixture data.
+
 ```sh
 node bin/web-performance-budget-gate.mjs --root examples/pass --budget budget.json --capture capture.json
 node bin/web-performance-budget-gate.mjs --root examples/fail --budget budget.json --capture capture.json

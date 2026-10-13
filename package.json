@@ -1,6 +1,6 @@
 {
   "name": "web-performance-budget-gate",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Fail builds when route-level performance budgets exceed declared limits.",
   "type": "module",
   "bin": {
@@ -12,6 +12,7 @@
     "src/index.mjs",
     "docs/",
     "examples/",
+    "CHANGELOG.md",
     "TOOL_ID"
   ],
   "engines": {

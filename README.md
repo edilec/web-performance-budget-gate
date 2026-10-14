@@ -4,7 +4,7 @@
 
 For a visual walkthrough of the included synthetic pass and fail fixtures, see the [Web Performance Budget Gate worked example](https://edilec.com/open-source/web-performance-budget-gate/). The repository remains the source of truth for the CLI and fixture data.
 
-[![Monochrome page reports passing through a budget gate; open the worked example](https://edilec.com/brand/social/web-performance-budget-gate-concept.jpg)](https://edilec.com/open-source/web-performance-budget-gate/)
+[![Monochrome page reports passing through a budget gate; open the worked example](https://edilec.com/brand/social/web-performance-budget-gate-social-preview.jpg)](https://edilec.com/open-source/web-performance-budget-gate/)
 
 Install the public source directly from GitHub if you want the command in a local project. This package has **not** been published to the npm registry:
 
